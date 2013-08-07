@@ -1,4 +1,5 @@
 var markersArray = [];	
+
 var beaches = [
 ['103rd St/Watts Towers Station', 27.8, -33.8, 'Blue', 'Yes', 'No', '63', '0', '0', '117, 254, 305, 612, 55/355', 'riding_metro/bus_overview/images/801.pdf', '10100+Grandee+Av%2C+Los+Angeles+90002', 'place?ftid=0x80c2cbd708a7b5d9:0xc7731f7de0ea059d&q=type:transit_station:%22104th+Street+Station%22&t=h&cad=src:ppiwlink&ei=1q5jT62bMuagiQKP9oGQDQ&dtab=2'],
 ['1st St Station', 27.8, -76.4, 'Blue', 'No', 'No', '0', '0', '0', '60, 232', 'riding_metro/bus_overview/images/801.pdf', '108+N+Long+Beach+Bl%2C+Long+Beach+90802', 'place?ftid=0x80dd31395957ce0b:0xb4f2dabe8c0d9d27&q=type:transit_station:%221st+Street+Station%22&t=h&cad=src:ppiwlink&ei=fa9jT7SqH5DEpgTl4v3gBQ&dtab=2'],
@@ -556,11 +557,16 @@ map.setCenter(new google.maps.LatLng(y, x));
 
 //set markers
 function clearOverlays() {
-  if (markersArray) {
+	
+
+				    if (markersArray) {
     for (var i = 0; i < markersArray.length; i++ ) {
       markersArray[i].setMap(null);
+	  if ( i== (markersArray.length-1))
+	  {markersArray = [];
+	  }
     }
-  }
+	}
   
 }
 

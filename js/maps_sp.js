@@ -555,11 +555,16 @@ map.setCenter(new google.maps.LatLng(y, x));
 
 //set markers
 function clearOverlays() {
-  if (markersArray) {
+	
+
+				    if (markersArray) {
     for (var i = 0; i < markersArray.length; i++ ) {
       markersArray[i].setMap(null);
+	  if ( i== (markersArray.length-1))
+	  {markersArray = [];
+	  }
     }
-  }
+	}
   
 }
 
