@@ -1,0 +1,214 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Go Metro Map Interactive</title>
+      <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+	<script src="../js/maps_sp.js" type="text/javascript"></script> 
+      <script src="../data/rails.js" type="text/javascript"></script> 
+      <script src="../data/stations-graphic.js" type="text/javascript"></script> 
+      <link rel="stylesheet" type="text/css" media="all" href="../style.css">
+      <script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+      <script type="text/javascript" src="../js/jquery.autocomplete.min.js"></script>
+      <script type="text/javascript" src="../js/currency-autocomplete.js"></script>
+      <script type="text/javascript" src="//use.typekit.net/his3nwi.js"></script>
+      <script type="text/javascript">try{Typekit.load();}catch(e){}</script> 
+      <script>
+         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+         
+         ga('create', 'UA-10002990-1', 'metro.net');
+         ga('send', 'pageview');
+         
+      </script>
+      <link rel="stylesheet" type="text/css" href="http://www.metro.net/interactives/global_common/template/css/full_page.css" />
+      <style type="text/css">
+         #wrap {
+         position:absolute;
+         top:0px;
+         left: 707px;
+         z-index:999;
+         font: 1.3em/1.3 Arial, Helvetica, sans-serif;
+         margin: 0;
+         padding: 0;
+         background-color: none;
+         }
+         /* This CSS is used for the Show/Hide functionality. Script in BODY */
+         #map-legend{
+         z-index: 999;
+         position: absolute;
+         right:10px;
+         padding: 10px;
+         }
+         .more {
+         }
+         button {
+         border: 1px solid #333333;
+         color: white;
+         margin: 10px;
+         background-color: #333333;
+         background-image: -webkit-gradient(linear,left top,left bottom,from(#09F),to(#000000));
+         background-image: -webkit-linear-gradient(top,#333333,#000000);
+         background-image: -moz-linear-gradient(top, #333333,#000000);
+         background-image: -ms-linear-gradient(top,#333333,#000000);
+         background-image: -o-linear-gradient(top,#333333,#000000);
+         background-image: linear-gradient(top,#333333, #000000);
+         filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#333333',EndColorStr='#000000');
+         display: inline-block;
+         text-align: center;
+         font-weight: bold;
+         padding: 0 8px;
+         line-height: 27px;
+         -webkit-border-radius: 2px;
+         -moz-border-radius: 2px;
+         border-radius: 2px;
+         -webkit-transition: all 0.218s;
+         -moz-transition: all 0.218s;
+         -o-transition: all 0.218s;
+         transition: all 0.218s;
+         }
+      </style>
+      <script type="text/javascript">
+         //Disable Enter on Forms
+         function handleEnter (field, event) {
+         	var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
+         	if (keyCode == 13) {
+         		var i;
+         		for (i = 0; i < field.form.elements.length; i++)
+         		if (field == field.form.elements[i])
+         		break;
+         		i = (i + 1) % field.form.elements.length;
+         		field.form.elements[i].focus();
+         		return false;
+         	} 
+         	else
+         	return true;
+         }   
+         
+         //grab variable from URL (Called out by EV Station Page)
+         var first = getUrlVars()["station"];
+         var second = getUrlVars()["zoom"];
+         
+         //Getting URL Variable
+         function getUrlVars() {
+             var vars = {};
+             var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+         		vars[key] = value;
+         	});
+             return vars;
+         }
+         
+         //Legend Control
+         function showHide(shID) {
+         	if (document.getElementById(shID)) {
+         		if (document.getElementById(shID+'-show').style.display != 'none') {
+         			document.getElementById(shID+'-show').style.display = 'none';
+         			fadeIn();
+         			document.getElementById(shID).style.display = 'block';
+         			document.getElementById(shID+'-hide').style.display = 'inline';
+         		}
+         		else {
+         			document.getElementById(shID+'-show').style.display = 'inline';
+         			fadeOut();
+         			//document.getElementById(shID).style.display = 'none';
+         			document.getElementById(shID+'-hide').style.display = 'none';
+         		}
+         	}
+         }
+         
+         //MAP Resize
+         function resizeMapDiv() {
+         	//Resize the height of the div containing the map.
+         	//Do not call any map methods here as the resize is called before the map is created.
+         	var d=document.getElementById("map");
+         	var offsetTop=0;
+         	for (var elem=d; elem!=null; elem=elem.offsetParent) {
+         		offsetTop+=elem.offsetTop;
+         	}
+         	var height=100;
+         	if (height>=0) {
+         		d.style.height=height+"%";
+         	}
+         }
+      </script>
+   </head>
+   <body onresize="resizeMapDiv()" onload="load()" id="attachDIV">
+      <div id="nav">
+         <div id="logocontent">
+            <table class="mtable">
+               <tr>
+                  <td style="vertical-align: top;">
+                     <a href="http://www.metro.net"><img src="../../../global_common/template/imgs/metroWebLogo2-trans.png" width="170" height="60" alt="Metro Logo" /></a>
+                  </td>
+                  <td width="20px">
+                  </td>
+                  <td style="border-left: 1px solid; border-color:#666"><b id="titlecon">Go Metro Map Interactive</b>
+                  </td>
+               </tr>
+            </table>
+         </div>
+         <div style="background-color: rgb(37, 97, 170); color: rgb(255, 255, 255); padding: 5px; text-align: center; font-size: 18px;">Alert: Blue line station closures in Long Beach. <a style="color:#00ff33;" href="http://www.metro.net/news/simple_pr/better-blue-line-30-day-closure-four-metro-blue-li/">Click here</a> for more info.</div>
+      </div>
+      <div id="allcontent">
+         <div id="main">
+                                    <p style="
+    background: url(../../../global_common/template/imgs/info-icon.png) left center no-repeat;
+    padding-left: 25px;
+"><a href="http://www.metro.net/interactives/gmaps/go_metro">In English</a> | Haga clic en cualquier de las estaciones para información sobre conexiones de autobús, estacionamiento, casilleros de bicicleta y destinos cercanos. 
+              <em>Último revisado: Lunes, 08 de septiembre 2014</em></p>  
+            <div id="searchfield">
+            <div style="margin: 5px; white-space: nowrap;">
+               <div style="float: left; display: inline-block;"><img style="" src="http://www.metro.net/interactives/gmaps/go_metro/images/search_icon.png"></div>
+               <form ><input onfocus="if (this.value == 'Nombre de estación') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Nombre de estación';}" value="Nombre de estación" type="text" name="station" class="biginput" id="autocomplete" onkeypress="return handleEnter(this, event)"></form>
+            </div>
+            </div>
+            <!-- @end #searchfield -->
+            <div id="transit">   
+               <button id="overlayToggle">Mapa de Google</button>
+            </div>
+            <div id="legend">     
+               <button style="display:none;" id="example-show" onclick="showHide('example');return false;">Mostrar leyenda</button>
+               <button id="example-hide" onclick="showHide('example');return false;">Esconder leyenda</button>
+            </div>
+            <div id="mapHolder" style="width:100%; height:95%;">
+               <div id="map" style="width: 100%; border: 1px solid #999; background-color: #fff;"></div>
+            </div>
+            <div id="example" class="more">
+               <img id="map-legend" src="../images/go_metro_map_legend_sp.jpg" />
+            </div>
+         </div>
+      </div>
+      </div>
+      <script type="text/javascript">
+         //Call out Hide/Show CSS for Legend
+         var element = document.getElementById("map-legend");
+         var duration = 400; /* fade duration in millisecond */
+         
+         function SetOpa(Opa) {
+         	element.style.opacity = Opa;
+         	element.style.top = 50+'px';
+         	element.style.MozOpacity = Opa;
+         	element.style.KhtmlOpacity = Opa;
+         	element.style.filter = 'alpha(opacity=' + (Opa * 100) + ');';
+         }
+         
+         function fadeOut() {
+         	element.style.display='none';
+         }
+         
+         function fadeIn() {
+         	element.style.display = 'block';
+         	for (i = 0; i <= 1; i += 0.01) {
+         		setTimeout("SetOpa(" + i +")", i * duration);
+         	}
+         }
+         
+      </script>
+   </body>
+</html>
+

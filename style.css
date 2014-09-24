@@ -50,24 +50,25 @@ input, textarea {
 
 
 
-#searchfield { display: block; width: 100%; text-align: center; margin-bottom: 35px; }
+#searchfield {  border: 1px solid #000; display: block; width: 100%; text-align: left; margin: 0px; padding:0px; background: #333; }
 
 #searchfield form {
   display: inline-block;
-  background: #eeefed;
-  padding: 0;
+  background: #666;
+  vertical-align: top;
+  padding: 5px;
   margin: 0;
   padding: 5px;
-  border-radius: 3px;
-  margin: 5px 0 0 0;
+  border-radius: 0px;
+  margin: 0;
 }
 #searchfield form .biginput {
   width: 600px;
   height: 40px;
   padding: 0 10px 0 10px;
   background-color: #fff;
-  border: 1px solid #c8c8c8;
-  border-radius: 3px;
+  border: 0px solid #000;
+  border-radius: 0px;
   color: #aeaeae;
   font-weight:normal;
   font-size: 1.5em;
