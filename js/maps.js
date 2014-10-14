@@ -14,11 +14,20 @@ var allowedBounds;
 //Initial Map Load
 var map; //the GMap3 itself
 
+<<<<<<< HEAD
 function updateEdge() {
 	imageWidth = 3000;
     imageHeight =3000;
 	if (imageWidth > imageHeight) {
 		widthPercent = 200;
+=======
+
+function updateEdge() {
+    imageWidth = 3000;
+    imageHeight =3000;
+    if (imageWidth > imageHeight) {
+        widthPercent = 200;
+>>>>>>> fc4adb7de0c2858c9dac0a55ba98b63e09586f5f
         heightPercent = imageHeight / imageWidth * 100;
     }
     else {
@@ -26,11 +35,19 @@ function updateEdge() {
 		widthPercent = 150;
         //widthPercent = imageWidth / imageHeight * 100;
     }
+<<<<<<< HEAD
 	
 	latbound = heightPercent / 2.0;
     lngbound = widthPercent / 2.0;
 	
 	var bounds = map.getBounds();
+=======
+
+    latbound = heightPercent / 2.0;
+    lngbound = widthPercent / 2.0;
+
+    var bounds = map.getBounds();
+>>>>>>> fc4adb7de0c2858c9dac0a55ba98b63e09586f5f
     var sw = bounds.getSouthWest();
     var ne = bounds.getNorthEast();
     var width = ne.lng() - sw.lng();
@@ -41,7 +58,12 @@ function updateEdge() {
     var top = Math.max(latbound - (height / 2), 0.0000001);
     var right = Math.max(lngbound - (width / 2), 0.0000001);
 
+<<<<<<< HEAD
     allowedBounds = new google.maps.LatLngBounds(new google.maps.LatLng(bottom, left), new google.maps.LatLng(top, right));
+=======
+    allowedBounds = new google.maps.LatLngBounds(
+    new google.maps.LatLng(bottom, left), new google.maps.LatLng(top, right));
+>>>>>>> fc4adb7de0c2858c9dac0a55ba98b63e09586f5f
 }
 
 function percentProjection() {
@@ -66,7 +88,11 @@ percentProjection.prototype.fromPointToLatLng = function(pixel) {
 
 var moonTypeOptions = {
     getTileUrl: function(coord, zoom) {
+<<<<<<< HEAD
 		var normalizedCoord = getNormalizedCoord(coord, zoom);
+=======
+        var normalizedCoord = getNormalizedCoord(coord, zoom);
+>>>>>>> fc4adb7de0c2858c9dac0a55ba98b63e09586f5f
         if (!normalizedCoord) {
             return null;
         }
@@ -107,17 +133,35 @@ moonMapType.projection = new percentProjection();
 function getNormalizedCoord(coord, zoom) {
     var y = coord.y;
     var x = coord.x;
+<<<<<<< HEAD
     // tile range in one direction range is dependent on zoom level
     // 0 = 1 tile, 1 = 2 tiles, 2 = 4 tiles, 3 = 8 tiles, etc
     var tileRange = 1 << zoom;
+=======
+
+    // tile range in one direction range is dependent on zoom level
+    // 0 = 1 tile, 1 = 2 tiles, 2 = 4 tiles, 3 = 8 tiles, etc
+    var tileRange = 1 << zoom;
+
+>>>>>>> fc4adb7de0c2858c9dac0a55ba98b63e09586f5f
     // don't repeat across y-axis (vertically)
     if (y < 0 || y >= tileRange) {
         return null;
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> fc4adb7de0c2858c9dac0a55ba98b63e09586f5f
     // repeat across x-axis
     if (x < 0 || x >= tileRange) {
         return null;
     }
+    return {
+        x: x,
+        y: y
+    };
+}
+
     return {
         x: x,
         y: y
@@ -137,6 +181,7 @@ function clearOverlays() {
 	}
 }
 
+<<<<<<< HEAD
 function boxIn() {
 	if (allowedBounds.contains(map.getCenter())) {
 		return;
@@ -164,9 +209,131 @@ function boxIn() {
 		}
 		map.setCenter(new google.maps.LatLng(Y, X));
 	}
+=======
+
+ function boxIn() {
+        if (allowedBounds.contains(map.getCenter())) {
+            return;
+        }
+        else {
+            var mapCenter = map.getCenter();
+            var X = mapCenter.lng();
+            var Y = mapCenter.lat();
+
+            var AmaxX = allowedBounds.getNorthEast().lng();
+            var AmaxY = allowedBounds.getNorthEast().lat();
+            var AminX = allowedBounds.getSouthWest().lng();
+            var AminY = allowedBounds.getSouthWest().lat();
+
+            if (X < AminX) {
+                X = AminX;
+            }
+            if (X > AmaxX) {
+                X = AmaxX;
+            }
+            if (Y < AminY) {
+                Y = AminY;
+            }
+            if (Y > AmaxY) {
+                Y = AmaxY;
+            }
+
+            map.setCenter(new google.maps.LatLng(Y, X));
+        }
+    }
+	
+
+//LoadIt
+function load() {
+		google.maps.visualRefresh = true;
+        resizeMapDiv();
+        var latlng = new google.maps.LatLng(gmapsy, gmapsx);
+        var myOptions = {
+            zoom: initialZoom,
+            minZoom: 2,
+            maxZoom: 4,
+            center: latlng,
+            panControl: true,
+            zoomControl: true,
+			  zoomControlOptions: {
+    style: google.maps.MapTypeControlStyle.DEFAULT
+  },
+            mapTypeControl: false,
+            scaleControl: false,
+            streetViewControl: false,
+            overviewMapControl: false,
+	    mapTypeControlOptions: {
+            mapTypeIds: ["moon"]
+        }
+        }
+	map = new google.maps.Map(document.getElementById("map"), myOptions);
+    map.mapTypes.set('moon', moonMapType);
+    map.setMapTypeId('moon');
+
+//add button
+var homeControlDiv = document.createElement('DIV');
+homeControlDiv = document.getElementById('transit');
+homeControlDiv.index = 1;
+map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+var homeControlDiv4 = document.createElement('DIV4');
+homeControlDiv4 = document.getElementById('legend');
+homeControlDiv4.index = 1;
+map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv4);
+var homeControl = new HomeControl(homeControlDiv, homeControlDiv4, map);
+
+//Set Data Group
+setMarkers(map, beaches);
+
+//Detect Bounds
+google.maps.event.addListener(map, 'tilesloaded', function() {
+        updateEdge();
+    });
+google.maps.event.addListener(map, 'zoom_changed', function() {
+	updateEdge();
+	boxIn();
+	var currentZoom = map.getZoom();
+	
+	if (currentZoom == 2){
+		var newicon = {
+        path: google.maps.SymbolPath.CIRCLE,
+        fillOpacity: 0,
+        strokeOpacity: 0,
+        strokeWeight: 0,
+        scale: 10
+		};
+	}
+	else{
+		var newicon = {
+			path: google.maps.SymbolPath.CIRCLE,
+			scale: 30,
+			strokeWeight: 5,
+			strokeOpacity: 0
+			}
+		}
+
+for (var i = 0; i < markersArray.length; i++ ) {
+	markersArray[i].setIcon(newicon)
+	}
+});
+
+google.maps.event.addListener(map, 'center_changed', function() {
+        boxIn();
+    });
+
+///URL Variable Actions
+if (second == 2){		
+	map.setZoom(2); }	
+if (first >= 0){
+	var stationIDNum = first;
+	google.maps.event.trigger(markersArray[stationIDNum], 'click');
+	centerLocation = beaches[stationIDNum];
+	stationSelect = new google.maps.LatLng(centerLocation[3], centerLocation[2])
+	map.setCenter(stationSelect);	
+>>>>>>> fc4adb7de0c2858c9dac0a55ba98b63e09586f5f
 }
 	
 
+<<<<<<< HEAD
 //LoadIt
 function load() {
 	var searchStation = document.getElementById("autocomplete");
@@ -265,9 +432,18 @@ function load() {
 
 function alerz(stnID){
 	google.maps.event.trigger(markersArray[stnID], 'click');
+=======
+
+}
+
+
+	function alerz(stnID){
+google.maps.event.trigger(markersArray[stnID], 'click');
+>>>>>>> fc4adb7de0c2858c9dac0a55ba98b63e09586f5f
 }
 
 function setMarkers(map, locations, category) {
+<<<<<<< HEAD
 	for (var i = 0; i < locations.length; i++) {
 		var beach = locations[i];
 		//Place All Non-Street Stop Stations
@@ -389,6 +565,123 @@ function setMarkers(map, locations, category) {
 		});
 		markersArray.push(marker);
 	}
+=======
+   //  var image = new google.maps.MarkerImage('',
+   //  new google.maps.Size(40, 40),
+   //  new google.maps.Point(0,0),
+   //  new google.maps.Point(20, 20));
+/* var shadow = new google.maps.MarkerImage('marker-panel.png',
+new google.maps.Size(37, 32),
+new google.maps.Point(0,0),
+new google.maps.Point(0, 32));*/
+for (var i = 0; i < locations.length; i++) {
+     var beach = locations[i];
+
+//Place All Non-Street Stop Stations
+if (beach[2] != 'n'){
+	 var myLatLng = new google.maps.LatLng(beach[2], beach[3]);
+     var marker = new google.maps.Marker({
+          position: myLatLng,
+          map: map,
+		  anchorPoint: new google.maps.Point(0, 2),
+		  //shadow: shadow,
+		  icon: {
+			  path: google.maps.SymbolPath.CIRCLE,
+			  scale: 30,
+			  strokeWeight: 5,
+			  strokeColor: '#FF0000',
+			  strokeOpacity: 0
+			  },
+          stationID: beach[0],
+		  title: beach[1],
+		  xcoord: beach[3],
+		  ycoord: beach[2],
+          line: beach[4],
+          free: beach[5],
+          paid: beach[6],
+          parking: beach[7],
+          lockers: beach[8],
+          racks: beach[9],
+          connections: beach[10],
+          timetable: beach[11],
+          yelp: beach[12],
+          gmaps: beach[13],
+		  ada: beach[14],
+		  ev: beach[15],
+		  lon: beach[16],
+		  lat: beach[17]
+          });}
+
+var stationinfoWindow = new google.maps.InfoWindow();
+
+google.maps.event.addListener(stationinfoWindow,'closeclick',function(){
+	 marker2.setVisible(false);
+stationSelected = -1;
+});
+
+
+google.maps.event.addListener(marker, 'click', function() { 
+	var dataID = this.stationID;
+	 var datainfo = this.title;
+	 var dataxcoord = this.xcoord;
+	 var dataycoord = this.ycoord;
+	 var datalat = this.lat;
+	 var datalon = this.lon;
+	 var dataline = this.line;
+	 var datafree = this.free;
+	 var datapaid = this.paid;
+	 var dataparking = this.parking
+	 var datalockers = this.lockers;
+	 var dataracks = this.racks;
+	 var dataconnections = this.connections;
+	 var datatimetable = this.timetable;
+	 var datayelp = this.yelp;
+	 var datagmaps = this.gmaps;
+	 var dataada = this.ada;
+	 var dataev = this.ev;
+	 stationinfoWindow.setContent('<table width="400" border="0" cellspacing="5"><tr><td width="32" align="left" valign="middle"><img src="images/'+dataline+'.jpg" border="0"></td><td width="364" align="left" valign="middle"><font size="5"><b>'+datainfo+'</b></font><br>'+dataline+' Line</td></tr></table><table width="400" border="0" cellspacing="5"><tr><td width="30" align="left"><img src="images/parking.png" border="0"></td><td width="351" valign="middle"><strong>Parking - Free: </strong>'+datafree+'<strong> | Paid:</strong> '+datapaid+'</td></tr><tr><td align="left"><img src="images/parking_spaces.png" border="0"></td><td valign="middle"><strong>Parking Spaces:</strong> '+dataparking+'</td></tr><tr><td align="left"><img src="images/bike_locker.png" border="0"></td><td valign="middle"><strong>Bike Lockers: </strong>'+datalockers+'</td></tr><tr><td align="left"><img src="images/bike_rack.png" border="0"></td><td valign="middle"><strong>Bike Racks: </strong>'+dataracks+'</td></tr><tr><td align="left"><img src="images/transfer.png" border="0"></td><td valign="middle"><strong>Connections: </strong>'+dataconnections+'</td></tr><tr><td align="left"><img src="images/ada.jpg" border="0"></td><td valign="middle"><strong>Accessible Entrances: </strong>'+dataada+'</td></tr><tr><td align="left"><img src="images/ev.jpg" border="0"></td><td valign="middle"><strong>EV Charge Stations: </strong>'+dataev+'</td></tr></table><table border="0" width="400"><tbody><tr><td align="center"><a target="blank" href="http://www.metro.net/'+datatimetable+'"><img src="images/timetable.png" border="0"></a><a target="blank" href="http://maps.google.com/maps/'+datagmaps+'"><img src="images/google_maps.png" border="0"></a><a target="blank" href="http://www.yelp.com/search?find_desc=&amp;find_loc='+datayelp+'&amp;ns=1"><img src="images/yelp.png" border="0"></a></td></tr></tbody></table>');
+stationinfoWindow.open(map,this);
+google.maps.event.addListener(map, "click", function () {
+	
+	stationinfoWindow.close(map,this);
+		 marker2.setVisible(false);
+stationSelected = -1;
+	 });
+//Update Initial Variables
+gmapslat = datalat;
+gmapslon = datalon;
+gmapsx = dataxcoord;
+gmapsy = dataycoord;
+stationSelected = dataID;
+stationSelect = new google.maps.LatLng(dataycoord, dataxcoord) 
+
+
+  if ( numClicked > 0 ) {
+	   marker2.setVisible(true);
+    marker2.setPosition(stationSelect);
+  } else {
+	  numClicked = 1;
+marker2 = new google.maps.Marker({
+  map: map,
+  clickable: false,
+  position: stationSelect,
+  icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 20,
+	  strokeWeight: 5,
+	  strokeColor: '#000',
+	  strokeOpacity: 0.8,
+	   fillColor: '#000',
+      fillOpacity: 0
+    }
+});
+  }
+
+  });
+		  markersArray.push(marker);
+
+}
+>>>>>>> fc4adb7de0c2858c9dac0a55ba98b63e09586f5f
 }  
 
 //Function 1 Go to Google Maps
@@ -582,6 +875,7 @@ function HomeControl(homeControlDiv, homeControlDiv4, mapmap, map) {
 					lat: beach[17]
 				});
 				
+<<<<<<< HEAD
 				var stationinfoWindow = new google.maps.InfoWindow();
 				
 				google.maps.event.addListener(stationinfoWindow,'closeclick',function(){
@@ -720,6 +1014,228 @@ function HomeControl2(homeControlDiv, homeControlDiv4, mapmap, map) {
 		}
 		else {
 			var latlng = new google.maps.LatLng(-20, 5);
+=======
+												 	  	var polyline9 = new google.maps.Polyline({ 
+				        path: orangeLineext, 
+						clickable: false,
+						    geodesic: true,
+				        strokeColor: "#f15424", 
+				        strokeWeight: 6,
+						    strokeOpacity: 0.8,
+				        zIndex: 0 
+				}); 	
+
+polyline1.setMap(map);
+polyline2.setMap(map);
+polyline3.setMap(map);
+polyline4.setMap(map);
+polyline5.setMap(map);
+polyline6.setMap(map);
+polyline7.setMap(map);
+polyline8.setMap(map);
+polyline9.setMap(map);
+				 
+	setMarkers(map, beaches);
+	
+	if (stationSelected >= 0){
+		google.maps.event.trigger(markersArray[stationSelected], 'click');	 }
+				 
+	function setMarkers(map, locations, category) {
+
+     var image = new google.maps.MarkerImage('M-Logo.png',
+     new google.maps.Size(32, 32),
+     new google.maps.Point(0,0),
+    new google.maps.Point(16, 16));
+/* var shadow = new google.maps.MarkerImage('marker-panel.png',
+new google.maps.Size(37, 32),
+new google.maps.Point(0,0),
+new google.maps.Point(0, 32));*/
+for (var i = 0; i < locations.length; i++) {
+   
+     var beach = locations[i];
+	 
+	  if (beach[4] == 'Orange' || beach[4] == 'Silver'){
+		  var image = {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 7,
+	  strokeWeight: 2,
+	  strokeColor: '#000',
+	  strokeOpacity: 1,
+	      fillColor: '#FFF',
+    fillOpacity: 1,
+	zIndex: 0 
+
+    } }
+	  else{
+		  var image = new google.maps.MarkerImage('M-Logo.png',
+     new google.maps.Size(32, 32),
+     new google.maps.Point(0,0),
+    new google.maps.Point(16, 16));
+	  }
+
+	 var myLatLng = new google.maps.LatLng(beach[17], beach[16]);
+     var marker = new google.maps.Marker({
+          position: myLatLng,
+          map: map,
+
+         //shadow: shadow,
+  icon: image,
+          stationID: beach[0],
+		  title: beach[1],
+		  xcoord: beach[3],
+		  ycoord: beach[2],
+          line: beach[4],
+          free: beach[5],
+          paid: beach[6],
+          parking: beach[7],
+          lockers: beach[8],
+          racks: beach[9],
+          connections: beach[10],
+          timetable: beach[11],
+          yelp: beach[12],
+          gmaps: beach[13],
+		  ada: beach[14],
+		  ev: beach[15],
+		  lon: beach[16],
+		  lat: beach[17]
+          });
+var stationinfoWindow = new google.maps.InfoWindow();
+
+
+
+google.maps.event.addListener(stationinfoWindow,'closeclick',function(){
+marker2.setVisible(false);
+stationSelected = -1;
+});
+
+ google.maps.event.addListener(marker, 'click', function() {
+	 
+	var dataID = this.stationID;
+	 var datainfo = this.title;
+	 var dataxcoord = this.xcoord;
+	 var dataycoord = this.ycoord;
+	 var datalat = this.lat;
+	 var datalon = this.lon;
+	 var dataline = this.line;
+	 var datafree = this.free;
+	 var datapaid = this.paid;
+	 var dataparking = this.parking
+	 var datalockers = this.lockers;
+	 var dataracks = this.racks;
+	 var dataconnections = this.connections;
+	 var datatimetable = this.timetable;
+	 var datayelp = this.yelp;
+	 var datagmaps = this.gmaps;
+	 var dataada = this.ada;
+	 var dataev = this.ev;
+	 
+
+	 stationinfoWindow.setContent('<table width="400" border="0" cellspacing="5"><tr><td width="32" align="left" valign="middle"><img src="images/'+dataline+'.jpg" border="0"></td><td width="364" align="left" valign="middle"><font size="5"><b>'+datainfo+'</b></font><br>'+dataline+' Line</td></tr></table><table width="400" border="0" cellspacing="5"><tr><td width="30" align="left"><img src="images/parking.png" border="0"></td><td width="351" valign="middle"><strong>Parking - Free: </strong>'+datafree+'<strong> | Paid:</strong> '+datapaid+'</td></tr><tr><td align="left"><img src="images/parking_spaces.png" border="0"></td><td valign="middle"><strong>Parking Spaces:</strong> '+dataparking+'</td></tr><tr><td align="left"><img src="images/bike_locker.png" border="0"></td><td valign="middle"><strong>Bike Lockers: </strong>'+datalockers+'</td></tr><tr><td align="left"><img src="images/bike_rack.png" border="0"></td><td valign="middle"><strong>Bike Racks: </strong>'+dataracks+'</td></tr><tr><td align="left"><img src="images/transfer.png" border="0"></td><td valign="middle"><strong>Connections: </strong>'+dataconnections+'</td></tr><tr><td align="left"><img src="images/ada.jpg" border="0"></td><td valign="middle"><strong>Accessible Entrances: </strong>'+dataada+'</td></tr><tr><td align="left"><img src="images/ev.jpg" border="0"></td><td valign="middle"><strong>EV Charge Stations: </strong>'+dataev+'</td></tr></table><table border="0" width="400"><tbody><tr><td align="center"><a target="blank" href="http://www.metro.net/'+datatimetable+'"><img src="images/timetable.png" border="0"></a><a target="blank" href="http://maps.google.com/maps/'+datagmaps+'"><img src="images/google_maps.png" border="0"></a><a target="blank" href="http://www.yelp.com/search?find_desc=&amp;find_loc='+datayelp+'&amp;ns=1"><img src="images/yelp.png" border="0"></a></td></tr></tbody></table>');
+stationinfoWindow.open(map,this);
+
+
+
+gmapslat = datalat;
+gmapslon = datalon;
+gmapsx = dataxcoord;
+gmapsy = dataycoord;
+stationSelected = dataID;
+
+stationSelect = new google.maps.LatLng(datalat, datalon) 
+
+
+  if ( numClicked > 0 ) {
+	  marker2.setVisible(true);
+    marker2.setPosition(stationSelect);
+  } else {
+	  numClicked = 1;
+	  
+marker2 = new google.maps.Marker({
+  map: map,
+  clickable: true,
+  position: stationSelect,
+  icon: {
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 20,
+	  strokeWeight: 5,
+	  strokeColor: '#FF0000',
+	  strokeOpacity: 0.5,
+	   fillColor: '#000',
+      fillOpacity: 0,
+	  zIndex: 999 
+    }
+});
+  }
+  
+  });
+		  markersArray.push(marker);
+		  
+}
+}  			 			 
+//Associate the styled map with the MapTypeId and set it to display.
+map.mapTypes.set('pink_parks', pinkMapType);
+map.setMapTypeId('pink_parks');
+//Hide Legend		
+document.getElementById('map-legend').style.visibility = 'hidden';
+//add button
+var homeControl = new HomeControl2(homeControlDiv, homeControlDiv4, map);
+homeControlDiv.index = 1;
+map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+  });
+}
+
+
+
+//Function 2 Revert back to Graphic Maps
+function HomeControl2(homeControlDiv, homeControlDiv4, map) {
+// Setup the click event listeners
+google.maps.event.addDomListener(homeControlDiv, 'click', function() {
+	
+
+
+
+ function boxIn() {
+        if (allowedBounds.contains(map.getCenter())) {
+            return;
+        }
+        else {
+            var mapCenter = map.getCenter();
+            var X = mapCenter.lng();
+            var Y = mapCenter.lat();
+
+            var AmaxX = allowedBounds.getNorthEast().lng();
+            var AmaxY = allowedBounds.getNorthEast().lat();
+            var AminX = allowedBounds.getSouthWest().lng();
+            var AminY = allowedBounds.getSouthWest().lat();
+
+            if (X < AminX) {
+                X = AminX;
+            }
+            if (X > AmaxX) {
+                X = AmaxX;
+            }
+            if (Y < AminY) {
+                Y = AminY;
+            }
+            if (Y > AmaxY) {
+                Y = AmaxY;
+            }
+
+            map.setCenter(new google.maps.LatLng(Y, X));
+        }
+    }
+
+clearOverlays();
+	numClicked = 0;  
+//change
+ resizeMapDiv();
+       
+	   if (gmapsx != 'n'){
+	    var latlng = new google.maps.LatLng(gmapsy, gmapsx);
+				   }
+		else {
+		var latlng = new google.maps.LatLng(-20, 5);
+>>>>>>> fc4adb7de0c2858c9dac0a55ba98b63e09586f5f
 		}
 		var myOptions = {
 			zoom: initialZoom,
@@ -732,6 +1248,7 @@ function HomeControl2(homeControlDiv, homeControlDiv4, mapmap, map) {
             scaleControl: false,
             streetViewControl: false,
             overviewMapControl: false,
+<<<<<<< HEAD
 			mapTypeControlOptions: {
 				mapTypeIds: ["moon"]
 			}
@@ -791,3 +1308,66 @@ function HomeControl2(homeControlDiv, homeControlDiv4, mapmap, map) {
 		});
 	});
 }
+=======
+             mapTypeControlOptions: {
+            mapTypeIds: ["moon"]
+        }
+        }
+        map = new google.maps.Map(document.getElementById("map"), myOptions);
+    map.mapTypes.set('moon', moonMapType);
+    map.setMapTypeId('moon');
+ 	setMarkers(map, beaches);
+	
+
+	if (stationSelected >= 0 && gmapsx != 'n'){		
+	google.maps.event.trigger(markersArray[stationSelected], 'click');}
+	
+	
+		//add buttons
+document.getElementById('map-legend').style.visibility = 'visible';
+ var homeControl = new HomeControl(homeControlDiv, homeControlDiv4, map);
+  homeControlDiv.index = 1;
+ map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv);
+    homeControlDiv4.index = 1;
+ map.controls[google.maps.ControlPosition.TOP_RIGHT].push(homeControlDiv4);
+ 
+// Listen for the bounds_changes event
+ google.maps.event.addListener(map, 'tilesloaded', function() {
+        updateEdge();
+    });
+google.maps.event.addListener(map, 'zoom_changed', function() {
+	updateEdge();
+	boxIn();
+	var currentZoom = map.getZoom();
+	
+	if (currentZoom == 2){
+		var newicon = {
+        path: google.maps.SymbolPath.CIRCLE,
+        fillOpacity: 0,
+        strokeOpacity: 0,
+        strokeWeight: 0,
+        scale: 10
+		};
+	}
+	else{
+		var newicon = {
+			path: google.maps.SymbolPath.CIRCLE,
+			scale: 30,
+			strokeWeight: 5,
+			strokeOpacity: 0
+			}
+		}
+
+for (var i = 0; i < markersArray.length; i++ ) {
+	markersArray[i].setIcon(newicon)
+	}
+});
+google.maps.event.addListener(map, 'center_changed', function() {
+        boxIn();
+    });
+  });
+}
+
+
+
+>>>>>>> fc4adb7de0c2858c9dac0a55ba98b63e09586f5f
