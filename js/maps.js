@@ -11,6 +11,8 @@ var imageWidth;
 var imageHeight;
 var allowedBounds;
 
+
+//Load Google Maps API
 //Initial Map Load
 var map; //the GMap3 itself
 
